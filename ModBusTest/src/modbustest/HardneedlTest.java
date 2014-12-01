@@ -68,7 +68,7 @@ public class HardneedlTest {
             master.init();
 
             // 
-            //readDiscreteInputTest(master, SLAVE_ADDRESS, 0, 8);
+            readDiscreteInputTest(master, SLAVE_ADDRESS, 0, 8);
             //writeRegistersTest(master, SLAVE_ADDRESS, 0, new short[]{0x31, 0xb, 0xc, 0xd, 0xe, 0x9, 0x8, 0x7, 0x6});
             //readHoldingRegistersTest(master, SLAVE_ADDRESS, 0, 8);
             //readCoils(master, SLAVE_ADDRESS, 16, 32);
@@ -76,14 +76,14 @@ public class HardneedlTest {
             //readCoils(master, SLAVE_ADDRESS, 16, 32);
             //master.setValue(1, RegisterRange.HOLDING_REGISTER, 0, DataType.TWO_BYTE_INT_UNSIGNED, 100); // change Holding register value
             //setValue(slaveID,range,registerNumber,dataType,value); FORMA DEL METODO
-            master.setValue(1, RegisterRange.COIL_STATUS, 0, DataType.BINARY, true); // change coils state
+            //  master.setValue(1, RegisterRange.COIL_STATUS, 0, DataType.BINARY, true); // change coils state
+
             // System.out.println("VALOR REGISTRO: " + master.getValue(1,RegisterRange.HOLDING_REGISTER,  0, DataType.TWO_BYTE_INT_UNSIGNED)); //Read register
 
-           /* for (int i = 1; i < 32; i++) {
-                //i is the register number
-                System.out.println("VALOR REGISTRO: " + master.getValue(1, RegisterRange.COIL_STATUS, i, DataType.BINARY)); // read coil
-            }*/
-
+             for (int i = 1; i < 32; i++) {
+             //i is the register number
+             System.out.println("VALOR REGISTRO: " + master.getValue(1, RegisterRange.COIL_STATUS, i, DataType.BINARY)); // read coil
+             }
         } finally {
 
             master.destroy();

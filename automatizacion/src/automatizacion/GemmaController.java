@@ -1,5 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
+/*eaders in Project Properties
+ * To change this license header, choose License H.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -108,10 +108,10 @@ public class GemmaController implements Initializable {
     private static double structureY = yPoint - (3 * containerHeight / 4) + cajitasHeight;
     private static double piston3Y = yPoint - (5 * containerHeight / 8);
 
-    private int cajaColor = 0; // probable variable que va ir en singleton
-    private static final int CAJA_VERDE = 21312;//IGUAL
-    private static final int CAJA_NEGRA = 2312;//igual
-    private static final int CAJA_AZUL = 8712;//igual
+    public int cajaColor = 0; // probable variable que va ir en singleton
+    public static final int CAJA_VERDE = 21312;//IGUAL
+    public static final int CAJA_NEGRA = 2312;//igual
+    public static final int CAJA_AZUL = 8712;//igual
 
     private List<Rectangle> cajitas;
     private List<Rectangle> cajitas2;
@@ -149,7 +149,7 @@ public class GemmaController implements Initializable {
     private int contadorCajaAzul = 0;
     private ComboBox comboColor;
     public SimpleDoubleProperty vastagoRetraction;
-    private final static int PISTON_SPEED = 6;
+    private final static int PISTON_SPEED = 10;
     public boolean turnOnScada = true;
     public boolean wait = false;
 
@@ -253,23 +253,6 @@ public class GemmaController implements Initializable {
         instance.setGemma(this);
         anime.getChildren().add(animacion());
         anime.setBackground(new Background(new BackgroundFill(Color.CADETBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-
-        Task<Void> tk = new Task<Void>() {
-
-            @Override
-            protected Void call() throws Exception {
-                while (Crixus.getInstance().getGemma().turnOnScada) {
-
-                    Thread.sleep(50);
-                    Crixus.getInstance().getRead().readRegisters();
-
-                }
-                System.out.println("DEJE DE LEER LOS ESTADOS DE LOS PISTONES");
-                return null;
-            }
-        };
-
-        new Thread(tk).start();
 
     }
 
@@ -548,6 +531,18 @@ public class GemmaController implements Initializable {
                         }
                         tt.play();
                     }
+                } else {
+                    Task<Void> erase = new Task<Void>() {
+
+                        @Override
+                        protected Void call() throws Exception {
+                            Crixus.getInstance().getModbus().writeCommandThread(0, false);
+                            return null;
+                        }
+                    };
+
+                    new Thread(erase).start();
+
                 }
             }
 
@@ -600,6 +595,7 @@ public class GemmaController implements Initializable {
                         @Override
                         protected Void call() throws Exception {
                             if (Crixus.getInstance().getColorSensor() != null) {
+
                                 Crixus.getInstance().getCommand().AssignColor(Crixus.getInstance().getColorSensor().getCurrent());
                             }
                             return null;
@@ -781,6 +777,30 @@ public class GemmaController implements Initializable {
                 if (t && !t1 && griperBound) {
                     System.out.println("guarda la caja");
 
+                    // desactivar color
+                    Task<Void> write2 = new Task<Void>() {
+
+                        @Override
+                        protected Void call() throws Exception {
+                            switch (Crixus.getInstance().getGemma().cajaColor) {
+                                case GemmaController.CAJA_AZUL:
+                                    Crixus.getInstance().getModbus().writeCommandThread(3, false);
+                                    break;
+                                case GemmaController.CAJA_NEGRA:
+                                    Crixus.getInstance().getModbus().writeCommandThread(2, false);
+                                    break;
+                            }
+                            if (Crixus.getInstance().getColorSensor() != null) {
+
+                                Crixus.getInstance().getCommand().AssignColor(Crixus.getInstance().getColorSensor().getCurrent());
+                            }
+                            return null;
+                        }
+
+                    };
+                    new Thread(write2).start();
+
+                    //
                     double yPos = 0;
                     double xPos = 0;
                     CubicCurveTo curve = null;

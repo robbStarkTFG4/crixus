@@ -26,6 +26,8 @@ public class Crixus {
     private WritableCommands command = null;
     private ReadOnlyCommands read = null;
 
+    public Thread arya = null;
+
     private Crixus() {
         init();
     }
@@ -38,6 +40,8 @@ public class Crixus {
         System.out.println("Arrancando hilos......");
 
         modbus = new ModBus();
+        arya = new Thread(modbus);
+        arya.start();
 
         //  blueServer = new BlueServer();
         // Thread blue = new Thread(blueServer);
@@ -82,6 +86,7 @@ public class Crixus {
         colorSensor.readPort = false;
         colorSensor.close();
         modbus.close();
+        ModBus.alive = false;
         gemma.turnOnScada = false;
         System.out.println("Recursos Liberados");
     }

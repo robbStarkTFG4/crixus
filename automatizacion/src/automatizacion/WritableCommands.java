@@ -32,7 +32,8 @@ public class WritableCommands {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 // get modbus instance from crixus and write
                 System.out.println("ME LLAMASTE?");
-                Crixus.getInstance().getModbus().writeCommandStart(WritableCommands.START, newValue);
+                Crixus.getInstance().getModbus().writeCommandThread(WritableCommands.START, newValue);
+
             }
 
         });
@@ -42,7 +43,8 @@ public class WritableCommands {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                Crixus.getInstance().getModbus().writeCommand(WritableCommands.STOP, newValue);
+                //.getInstance().getModbus().writeCommand(WritableCommands.STOP, newValue);
+                Crixus.getInstance().getModbus().writeCommandThread(4, newValue);
             }
 
         });
@@ -51,7 +53,7 @@ public class WritableCommands {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                Crixus.getInstance().getModbus().writeCommand(2, newValue);
+                //   Crixus.getInstance().getModbus().writeCommand(2, newValue);
             }
 
         });
@@ -61,7 +63,7 @@ public class WritableCommands {
 
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                Crixus.getInstance().getModbus().writeContador(newValue.intValue());
+//                Crixus.getInstance().getModbus().writeContador(newValue.intValue());
             }
 
         });
@@ -76,15 +78,19 @@ public class WritableCommands {
     }
 
     public void AssignColor(String current) {
+
         switch (current) {
             case "negro":
-                Crixus.getInstance().getModbus().writeCommand(2, true);
-                Crixus.getInstance().getModbus().writeCommand(3, false);
+                System.out.println("ENTRE EN NEGRO");
+                Crixus.getInstance().getModbus().writeCommandThread(2, true);
+
+                Crixus.getInstance().getGemma().cajaColor = GemmaController.CAJA_NEGRA;
                 Crixus.getInstance().getGemma().vastagoRetraction.set(PistonControl.POS_2);
                 break;
             case "azul":
-                Crixus.getInstance().getModbus().writeCommand(3, true);
-                Crixus.getInstance().getModbus().writeCommand(2, false);
+                System.out.println("ENTRE EN AZUL");
+                Crixus.getInstance().getModbus().writeCommandThread(3, true);
+                Crixus.getInstance().getGemma().cajaColor = GemmaController.CAJA_AZUL;
                 Crixus.getInstance().getGemma().vastagoRetraction.set(PistonControl.POS_1);
                 break;
             default:
@@ -92,5 +98,11 @@ public class WritableCommands {
                 // Crixus.getInstance().getModbus().writeCommand(2, false);
                 break;
         }
+
+        /*  if (current.equals("negro")) {
+         Crixus.getInstance().getModbus().writeCommandThread(3, false);
+         } else {
+         Crixus.getInstance().getModbus().writeCommandThread(2, false);
+         }*/
     }
 }

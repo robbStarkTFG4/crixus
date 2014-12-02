@@ -31,22 +31,35 @@ import javafx.concurrent.Task;
  *
  * @author NORE
  */
-public class ModBus {
+public class ModBus implements Runnable {
 
     private ModbusMaster master;
 // MODBUS network slave address  paquete  windows EmbeddedInteliggence
-    public final static int SLAVE_ADDRESS = 0;
+    public final static int SLAVE_ADDRESS = 1;
 
     // Serial port baud rate
-    private final static int BAUD_RATE = 9600;
+    private final static int BAUD_RATE = 19200;
 
     private Crixus instance = null;
+
+    public static boolean writeOrRead = false;
+
+    public static boolean alive = true;
+
+    private boolean valor;
+
+    private int direccion;
+
+    private boolean[] estados;
+
+    private int i;
+    private int i0;
 
     public ModBus() {
         SerialParameters serialParameters = new SerialParameters();
         // Set the serial port of the MODBUS communication serialParameters
         serialParameters.
-                setCommPortId("COM1");
+                setCommPortId("COM11");
         // Set no parity
 
         serialParameters.setParity(0);
@@ -65,6 +78,7 @@ public class ModBus {
         ModbusFactory modbusFactory = new ModbusFactory();
 
         master = modbusFactory.createRtuMaster(serialParameters);
+        master.setTimeout(50000);
 
         try {
             master.init();
@@ -79,7 +93,7 @@ public class ModBus {
      *
      * read digital inputs
      */
-    public boolean[] readDiscreteInputTest(int slaveId, int start, int len) {
+    private boolean[] readDiscreteInputTest(int slaveId, int start, int len) {
 
         boolean[] vals = new boolean[6];
         for (int i = start; i < len + 1; i++) {
@@ -199,7 +213,7 @@ public class ModBus {
         master.destroy();
     }
 
-    public void writeCommand(int registro, boolean value) {
+    private void writeCommand(int registro, boolean value) {
         System.out.println("escribiendo registro al plc");
         try {
             master.setValue(SLAVE_ADDRESS, RegisterRange.COIL_STATUS, registro, DataType.BINARY, value); // change coils state
@@ -215,7 +229,7 @@ public class ModBus {
         return master;
     }
 
-    public void writeContador(int intValue) {
+    private void writeContador(int intValue) {
         try {
             master.setValue(SLAVE_ADDRESS, RegisterRange.HOLDING_REGISTER, 0, DataType.TWO_BYTE_INT_UNSIGNED, intValue); // change Holding register value
         } catch (ModbusTransportException ex) {
@@ -224,10 +238,9 @@ public class ModBus {
             Logger.getLogger(ModBus.class.getName()).log(Level.SEVERE, null, ex);
         }
 
- 
     }
 
-    public void writeCommandStart(int registro, Boolean newValue) {
+    private void writeCommandStart(int registro, Boolean newValue) {
         System.out.println("escribiendo registro al plc");
         try {
             master.setValue(SLAVE_ADDRESS, RegisterRange.COIL_STATUS, registro, DataType.BINARY, newValue); // change coils state
@@ -237,5 +250,38 @@ public class ModBus {
             Logger.getLogger(ModBus.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    @Override
+    public void run() {
+        while (alive) {
+            if (writeOrRead) {
+                //escribe comandos
+                System.out.println("BLOQUE QUE ESCRIBE AL PLC");
+                System.out.println(direccion);
+                System.out.println(valor);
+                writeCommand(direccion, valor);
+                ModBus.writeOrRead = false;
+                System.out.println("YA ESCRIBI EN EL PLC");
+            } else {
+                //lee comandos
+                Crixus.getInstance().getRead().readRegisters();
+                estados = readDiscreteInputTest(SLAVE_ADDRESS, i, i0);
+                System.out.println("BLOQUE QUE LEE ESTADOS DE LOS PISTONES");
+            }
+        }
+    }
+
+    public void writeCommandThread(int START, Boolean newValue) {
+        direccion = START;
+        valor = newValue;
+        ModBus.writeOrRead = true;
+
+    }
+
+    public boolean[] readDiscrete(int SLAVE_ADDRESS, int i3, int i5) {
+        i = i3;
+        i0 = i5;
+        return estados;
     }
 }

@@ -35,7 +35,11 @@ public class ReadOnlyCommands {
 
                                 @Override
                                 public void run() {
-                                    Crixus.getInstance().getGemma().piston.setVastagoState(newValue);
+                               try {
+                                        Crixus.getInstance().getGemma().piston.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             });
 
@@ -46,7 +50,11 @@ public class ReadOnlyCommands {
 
                                 @Override
                                 public void run() {
-                                    Crixus.getInstance().getGemma().piston2.setVastagoState(newValue);
+                                      try {
+                                        Crixus.getInstance().getGemma().piston2.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             });
                             break;
@@ -56,7 +64,11 @@ public class ReadOnlyCommands {
 
                                 @Override
                                 public void run() {
-                                    Crixus.getInstance().getGemma().piston3.setVastagoState(newValue);
+                                    try {
+                                        Crixus.getInstance().getGemma().piston3.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             });
                             break;
@@ -66,7 +78,11 @@ public class ReadOnlyCommands {
 
                                 @Override
                                 public void run() {
-                                    Crixus.getInstance().getGemma().piston4.setVastagoState(newValue);
+                                    try {
+                                        Crixus.getInstance().getGemma().piston4.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             });
                             break;
@@ -76,7 +92,11 @@ public class ReadOnlyCommands {
 
                                 @Override
                                 public void run() {
-                                    Crixus.getInstance().getGemma().piston5.setVastagoState(newValue);
+                                      try {
+                                        Crixus.getInstance().getGemma().piston5.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             });
                             break;
@@ -86,7 +106,11 @@ public class ReadOnlyCommands {
 
                                 @Override
                                 public void run() {
-                                    Crixus.getInstance().getGemma().piston6.setVastagoState(newValue);
+                                  try {
+                                        Crixus.getInstance().getGemma().piston6.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             });
                             break;
@@ -101,13 +125,16 @@ public class ReadOnlyCommands {
 
         try {
             if (Crixus.getInstance().getModbus().getMaster().isInitialized()) {
-                boolean[] vals = Crixus.getInstance().getModbus().readDiscreteInputTest(
+                boolean[] vals = Crixus.getInstance().getModbus().readDiscrete(
                         ModBus.SLAVE_ADDRESS, 0, 5);
-
-                for (int i = 0; i < states.length; i++) {
-                    if (!(vals[i] && states[i].getValue())) {
-                        states[i].set(vals[i]);
+                if (vals.length > 0) {
+                    for (int i = 0; i < states.length; i++) {
+                        if (!(vals[i] && states[i].getValue())) {
+                            states[i].set(vals[i]);
+                        }
                     }
+                } else {
+                    System.out.println("ES NULO EL ARREGLO");
                 }
             }
         } catch (Exception e) {

@@ -41,11 +41,12 @@ public class Crixus {
 
         modbus = new ModBus();
         arya = new Thread(modbus);
-        arya.start();
+       // arya.start();
 
-        //  blueServer = new BlueServer();
-        // Thread blue = new Thread(blueServer);
-        //blue.start();
+        blueServer = new BlueServer();
+        Thread blue = new Thread(blueServer);
+        blue.start();
+        
         colorSensor = new ColorSensor();
         Thread sensor = new Thread(colorSensor);
         sensor.start();

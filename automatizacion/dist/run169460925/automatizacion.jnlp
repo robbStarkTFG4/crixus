@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="automatizacion.jar" size="94383" download="eager" />
+    <jar href="automatizacion.jar" size="94392" download="eager" />
     <jar href="lib/3dEffect.jar" size="9208" download="eager" />
     <jar href="lib/RXTXcomm.jar" size="60984" download="eager" />
     <jar href="lib/Undecorator.jar" size="81614" download="eager" />

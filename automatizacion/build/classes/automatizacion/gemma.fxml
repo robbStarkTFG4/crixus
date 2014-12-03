@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -15,44 +17,40 @@
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                      <children>
-                        <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-alignment: center;">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-alignment: center;">
-                                 <children>
-                                    <Button mnemonicParsing="false" text="Button" />
-                                 </children>
-                              </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-alignment: center;">
-                                 <children>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="81.0" prefWidth="60.0" style="-fx-padding: 5;">
-                                       <children>
-                                          <Button fx:id="pbCom5" mnemonicParsing="false" text="Button" />
-                                       </children>
-                                    </VBox>
-                                    <VBox style="-fx-padding: 5;">
-                                       <children>
-                                          <Button mnemonicParsing="false" text="Button" />
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-alignment: center;">
-                                 <children>
-                                    <Button mnemonicParsing="false" text="Button" />
-                                 </children>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </VBox>
-                           </children>
-                        </HBox>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
+                              <Label text="CONTROLES" textFill="#122286c2">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="5.0" />
+                                 </VBox.margin>
+                                 <effect>
+                                    <Reflection />
+                                 </effect>
+                              </Label>
                               <TextField fx:id="cantidad">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" />
                                  </VBox.margin></TextField>
-                              <Button fx:id="btn1" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button">
+                              <Button fx:id="pruebaCom" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Start">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="10.0" />
+                                 </VBox.margin></Button>
+                              <Button fx:id="pbCom2" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Contador">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="10.0" />
+                                 </VBox.margin></Button>
+                              <Button fx:id="pbCom3" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Stop">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="10.0" />
+                                 </VBox.margin></Button>
+                              <Button fx:id="pbCom4" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="reinicio">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="10.0" />
+                                 </VBox.margin></Button>
+                              <Button fx:id="btn1" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Step">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" top="10.0" />
                                  </VBox.margin>
@@ -60,19 +58,6 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </padding>
                               </Button>
-                              <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton">
-                                <items>
-                                  <MenuItem mnemonicParsing="false" text="Action 1" />
-                                  <MenuItem mnemonicParsing="false" text="Action 2" />
-                                </items>
-                                 <VBox.margin>
-                                    <Insets left="5.0" right="5.0" top="10.0" />
-                                 </VBox.margin>
-                              </SplitMenuButton>
-                              <Button fx:id="pruebaCom" mnemonicParsing="false" text="Button" />
-                              <Button fx:id="pbCom2" mnemonicParsing="false" text="Button" />
-                              <Button fx:id="pbCom3" mnemonicParsing="false" text="Button" />
-                              <Button fx:id="pbCom4" mnemonicParsing="false" text="Contador" />
                            </children>
                            <VBox.margin>
                               <Insets top="40.0" />

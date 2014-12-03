@@ -18,7 +18,7 @@ import javafx.beans.value.ObservableValue;
  */
 public class ReadOnlyCommands {
 
-    public SimpleBooleanProperty[] states = new SimpleBooleanProperty[6];
+    public SimpleBooleanProperty[] states = new SimpleBooleanProperty[7];
 
     public ReadOnlyCommands() {
         for (int i = 0; i < states.length; i++) {
@@ -30,12 +30,12 @@ public class ReadOnlyCommands {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     switch (lis) {
                         case 0:
-                            System.out.println("LISTENER " + lis);
+                            //   System.out.println("LISTENER " + lis);
                             Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
-                               try {
+                                    try {
                                         Crixus.getInstance().getGemma().piston.setVastagoState(newValue);
                                     } catch (Exception e) {
 
@@ -45,12 +45,12 @@ public class ReadOnlyCommands {
 
                             break;
                         case 1:
-                            System.out.println("LISTENER " + lis);
+                            //     System.out.println("LISTENER " + lis);
                             Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
-                                      try {
+                                    try {
                                         Crixus.getInstance().getGemma().piston2.setVastagoState(newValue);
                                     } catch (Exception e) {
 
@@ -59,7 +59,7 @@ public class ReadOnlyCommands {
                             });
                             break;
                         case 2:
-                            System.out.println("LISTENER " + lis);
+                            //  System.out.println("LISTENER " + lis);
                             Platform.runLater(new Runnable() {
 
                                 @Override
@@ -73,13 +73,15 @@ public class ReadOnlyCommands {
                             });
                             break;
                         case 3:
-                            System.out.println("LISTENER " + lis);
+                            //    System.out.println("LISTENER " + lis);
                             Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
                                     try {
-                                        Crixus.getInstance().getGemma().piston4.setVastagoState(newValue);
+                                        if (newValue == true) {
+                                            Crixus.getInstance().getGemma().piston4.setVastagoState(newValue);
+                                        }
                                     } catch (Exception e) {
 
                                     }
@@ -87,13 +89,15 @@ public class ReadOnlyCommands {
                             });
                             break;
                         case 4:
-                            System.out.println("LISTENER " + lis);
+                            //    System.out.println("LISTENER " + lis);
                             Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
-                                      try {
-                                        Crixus.getInstance().getGemma().piston5.setVastagoState(newValue);
+                                    try {
+                                        if (newValue == false) {
+                                            Crixus.getInstance().getGemma().piston4.setVastagoState(newValue);
+                                        }
                                     } catch (Exception e) {
 
                                     }
@@ -101,12 +105,26 @@ public class ReadOnlyCommands {
                             });
                             break;
                         case 5:
-                            System.out.println("LISTENER " + lis);
+                            //   System.out.println("LISTENER " + lis);
                             Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
-                                  try {
+                                    try {
+                                        Crixus.getInstance().getGemma().piston5.setVastagoState(newValue);
+                                    } catch (Exception e) {
+
+                                    }
+                                }
+                            });
+                            break;
+                        case 6:
+                            //   System.out.println("LISTENER " + lis);
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
                                         Crixus.getInstance().getGemma().piston6.setVastagoState(newValue);
                                     } catch (Exception e) {
 
@@ -126,7 +144,7 @@ public class ReadOnlyCommands {
         try {
             if (Crixus.getInstance().getModbus().getMaster().isInitialized()) {
                 boolean[] vals = Crixus.getInstance().getModbus().readDiscrete(
-                        ModBus.SLAVE_ADDRESS, 0, 5);
+                        ModBus.SLAVE_ADDRESS, 0, 6);
                 if (vals.length > 0) {
                     for (int i = 0; i < states.length; i++) {
                         if (!(vals[i] && states[i].getValue())) {

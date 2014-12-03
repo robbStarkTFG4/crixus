@@ -88,8 +88,6 @@ public class GemmaController implements Initializable {
     private Button pbCom3;
     @FXML
     private Button pbCom4;
-    @FXML
-    private Button pbCom5;
 
     private Automatizacion application;
 
@@ -152,7 +150,9 @@ public class GemmaController implements Initializable {
     private final static int PISTON_SPEED = 10;
     public boolean turnOnScada = true;
     public boolean wait = false;
-
+    private int ciclos = 0;
+    private boolean apagaStart = true;
+    private int procesos = 0;
     // SINGLETON
     private Crixus instance;
 
@@ -167,11 +167,21 @@ public class GemmaController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
+                Task<Void> test = new Task<Void>() {
 
-                Crixus.getInstance().getCommand().setStart(true);
+                    @Override
+                    protected Void call() throws Exception {
+                        Crixus.getInstance().getModbus().writeCommandThread(0, true);
+                        //    Thread.sleep(30);
+                        //    Crixus.getInstance().getModbus().writeCommandThread(5, false);
+                        return null;
+                    }
+                };
+                new Thread(test).start();
 
             }
         });
+
         btn1.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -194,8 +204,19 @@ public class GemmaController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
-                //    Crixus.getInstance().getGemma().turnOnScada = false;
-                Crixus.getInstance().getCommand().stop.set(true);
+                Task<Void> test = new Task<Void>() {
+
+                    @Override
+                    protected Void call() throws Exception {
+                        procesos = Integer.parseInt(cantidad.getText());
+                        Crixus.getInstance().getCommand().stop.set(true);
+                        //    Thread.sleep(30);
+                        //    Crixus.getInstance().getModbus().writeCommandThread(5, false);
+                        return null;
+                    }
+                };
+                new Thread(test).start();
+
             }
         });
 
@@ -203,8 +224,16 @@ public class GemmaController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
-                Crixus.getInstance().getCommand().anotherStask.set(true);
-                //  Crixus.getInstance().getRead().readRegisters();
+
+                Task<Void> test = new Task<Void>() {
+
+                    @Override
+                    protected Void call() throws Exception {
+                        Crixus.getInstance().getModbus().writeCommandThread(5, true);
+                        return null;
+                    }
+                };
+                new Thread(test).start();
             }
         });
 
@@ -213,22 +242,6 @@ public class GemmaController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 Crixus.getInstance().getCommand().contador.set(Integer.parseInt(cantidad.getText()));
-            }
-        });
-
-        pbCom5.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                String col = Crixus.getInstance().getColorSensor().getCurrent();
-                System.out.println(col);
-                switch (col) {
-                    case "negro":
-                        //   Crixus.getInstance().getCommand().
-                        break;
-                    case "azul":
-                        break;
-                }
             }
         });
 
@@ -536,7 +549,11 @@ public class GemmaController implements Initializable {
 
                         @Override
                         protected Void call() throws Exception {
-                            Crixus.getInstance().getModbus().writeCommandThread(0, false);
+                            if (apagaStart) {
+                                System.err.println("BORRANDO START");
+                                Crixus.getInstance().getModbus().writeCommandThread(0, false);
+                                //  apagaStart = false;
+                            }
                             return null;
                         }
                     };
@@ -567,6 +584,14 @@ public class GemmaController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
 
+                if (t && !t1) {
+                    System.out.println("*****Restando Procesos");
+                    procesos--;
+                    if (procesos == 0) {
+                        System.err.println("SE ACABARON LOS PROCESOS");
+                        Crixus.getInstance().getModbus().writeCommandThread(4, false);
+                    }
+                }
             }
 
         });
@@ -603,8 +628,9 @@ public class GemmaController implements Initializable {
 
                     };
                     new Thread(write).start();
+
                     if (current != null) {
-                        RotateTransition rotate = new RotateTransition(Duration.seconds(1.5), current);
+                        RotateTransition rotate = new RotateTransition(Duration.seconds(1), current);
                         rotate.setFromAngle(0);
                         rotate.setToAngle(720);
                         rotate.play();
@@ -727,7 +753,7 @@ public class GemmaController implements Initializable {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t && !t1) {
+                if (!t && t1) {
 
                 }
             }
@@ -751,6 +777,22 @@ public class GemmaController implements Initializable {
         piston5.setPistonSpeed(PISTON_SPEED);
         piston5.setVastagoColor(vastagoColor);
         checkCollitionWithPiston(piston5, piston4); // corredera
+        piston5.getVastagoStateProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (oldValue && !newValue) {
+                    ciclos++;
+
+                    if (ciclos == 2) {
+                        System.err.println("ESCRIBIENDO EN ESE BIT RARO PARA EL STOP");
+                        Crixus.getInstance().getModbus().writeCommandThread(5, false);
+                        ciclos = 0;
+                    }
+                }
+            }
+
+        });
 
         DropShadow p6 = new DropShadow();
         p6.setRadius(2);
@@ -782,29 +824,31 @@ public class GemmaController implements Initializable {
 
                         @Override
                         protected Void call() throws Exception {
+                            // System.out.println("LIMPIANDO COLOR");
                             switch (Crixus.getInstance().getGemma().cajaColor) {
                                 case GemmaController.CAJA_AZUL:
+                                    System.out.println("LIMPIANDO AZUL");
                                     Crixus.getInstance().getModbus().writeCommandThread(3, false);
                                     break;
                                 case GemmaController.CAJA_NEGRA:
+                                    System.out.println("LIMPIANDO NEGRO");
                                     Crixus.getInstance().getModbus().writeCommandThread(2, false);
                                     break;
                             }
-                            if (Crixus.getInstance().getColorSensor() != null) {
+                            /*  if (Crixus.getInstance().getColorSensor() != null) {
 
-                                Crixus.getInstance().getCommand().AssignColor(Crixus.getInstance().getColorSensor().getCurrent());
-                            }
+                             Crixus.getInstance().getCommand().AssignColor(Crixus.getInstance().getColorSensor().getCurrent());
+                             }*/
                             return null;
                         }
 
                     };
                     new Thread(write2).start();
 
-                    //
                     double yPos = 0;
                     double xPos = 0;
                     CubicCurveTo curve = null;
-                    switch (cajaColor) {
+                    switch (Crixus.getInstance().getGemma().cajaColor) {
                         case CAJA_VERDE:
 
                             yPos = stackCajaVerde.getTranslateY();
@@ -933,7 +977,7 @@ public class GemmaController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Bounds> ov, Bounds t, Bounds t1) {
                 if (rec.getBoundsInParent().intersects(t1)) {
-                    System.out.println("ETIQUETA LA CAJAAAA!!!!");
+                    // System.out.println("ETIQUETA LA CAJAAAA!!!!");
                 }
             }
         });

@@ -53,7 +53,7 @@ public class WritableCommands {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                //   Crixus.getInstance().getModbus().writeCommand(2, newValue);
+                Crixus.getInstance().getModbus().writeCommandThread(5, newValue);
             }
 
         });

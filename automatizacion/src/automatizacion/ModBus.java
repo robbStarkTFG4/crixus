@@ -46,9 +46,9 @@ public class ModBus implements Runnable {
 
     public static boolean alive = true;
 
-    private boolean valor;
+    static boolean valor;
 
-    private int direccion;
+    static int direccion;
 
     private boolean[] estados;
 
@@ -95,7 +95,7 @@ public class ModBus implements Runnable {
      */
     private boolean[] readDiscreteInputTest(int slaveId, int start, int len) {
 
-        boolean[] vals = new boolean[6];
+        boolean[] vals = new boolean[7];
         for (int i = start; i < len + 1; i++) {
             try {
                 //i is the register number
@@ -258,16 +258,16 @@ public class ModBus implements Runnable {
             if (writeOrRead) {
                 //escribe comandos
                 System.out.println("BLOQUE QUE ESCRIBE AL PLC");
-                System.out.println(direccion);
-                System.out.println(valor);
+                System.out.println("la direccion: " + direccion);
+                System.out.println("el valor: " + valor);
                 writeCommand(direccion, valor);
                 ModBus.writeOrRead = false;
-                System.out.println("YA ESCRIBI EN EL PLC");
+                //   System.out.println("YA ESCRIBI EN EL PLC");
             } else {
                 //lee comandos
                 Crixus.getInstance().getRead().readRegisters();
                 estados = readDiscreteInputTest(SLAVE_ADDRESS, i, i0);
-                System.out.println("BLOQUE QUE LEE ESTADOS DE LOS PISTONES");
+                //   System.out.println("BLOQUE QUE LEE ESTADOS DE LOS PISTONES");
             }
         }
     }
